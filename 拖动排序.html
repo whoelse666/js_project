@@ -1,0 +1,131 @@
+<!--
+ * @Author: RONGWEI PENG
+ * @Date: 2023-02-15 20:25:20
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2023-02-15 22:02:15
+ * @FilePath: /js_project/拖动排序.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul {
+        position: absolute;
+        left: 50%;
+        top: 30px;
+        width: 100%;
+        height: 100%;
+        background-color: gray;
+        transform: translateX(-50%);
+      }
+      li {
+        list-style: none;
+        width: 300px;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 10px;
+        background-color: pink;
+        text-align: center;
+        color: white;
+        margin: 10px 0 ;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="container">
+      <li draggable="true" class="ele">排名1</p>
+      <li draggable="true" class="ele">排名2</p>
+      <li draggable="true" class="ele">排名3</p>
+      <li draggable="true" class="ele">排名4</p>
+      <li draggable="true" class="ele">排名5</p>
+    </ul>
+
+    <script>
+      var node = document.querySelector("#container");
+      var draging = null;
+      node.ondragstart = function (event) {
+        event.dataTransfer.setData("te", event.target.innerText);
+        draging = event.target;
+      };
+      node.ondragover = function (event) {
+        event.preventDefault();
+        var target = event.target;
+        if (target.nodeName === "LI") {
+          if (target !== draging) {
+            var targetRect = target.getBoundingClientRect();
+            var dragingRect = draging.getBoundingClientRect();
+            if (target) {
+              if (target.animated) {
+                return;
+              }
+            }
+            if (getIndex(draging) < getIndex(target)) {
+              target.parentNode.insertBefore(draging, target);
+            }
+            _animate(dragingRect, draging);
+            _animate(targetRect, target);
+          }
+        }
+      };
+      function getIndex(el) {
+        var index = 0;
+        if (!el || !el.parentNode) {
+          return -1;
+        }
+        while (el && (el=el.previousElementSibling)) {
+          index++;
+        }
+        return index;
+      }
+      function _animate(prevRect, target) {
+        var ms = 100;
+        if (ms) {
+          var currentRect = target.getBoundingClientRect();
+          if (prevRect.nodeType === 1) {
+            prevRect = prevRect.getBoundingClientRect();
+          }
+
+          styleEvent(target, "transition", "none");
+          styleEvent(target, "transform", "translated3d(" + (prevRect.left - currentRect.left) + "px," + (prevRect.top - currentRect.top) + "px,0)");
+
+          target.offsetWidth;
+          styleEvent(target, "transition", "all " + ms + "ms");
+          styleEvent(target, "transform", "translated3d(0,0,0)");
+
+          clearTimeout(target.animetes);
+          target.animatan = setTimeout(function () {
+            styleEvent(target, "transition", "");
+            styleEvent(target, "transform", "");
+            target.animated = false;
+          }, ms);
+        }
+      }
+
+      function styleEvent(el, prop, val) {
+        var style = el && el.style;
+
+        if (style) {
+          if (val === void 0) {
+            if (document.defaultView && document.defaultView.getComputedStyle) {
+              val = document.defaultView.getComputedStyle(el, "");
+            } else {
+              val = el.currentStyle;
+            }
+            return prop === void 0 ? val : val[prop];
+          } else {
+            if (!(prop in style)) {
+              prop = "-webkit-" + prop;
+            }
+
+            style[prop] = val + (typeof val === "string" ? " " : "px");
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

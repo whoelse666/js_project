@@ -1,0 +1,59 @@
+<!--
+ * @Author: RONGWEI PENG
+ * @Date: 2023-01-01 15:38:57
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2023-01-11 09:50:23
+ * @FilePath: \js_project\index.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="shortcut icon" href="http://example.com/favicon.ico" type="image/vnd.microsoft.icon" />
+    <link rel="icon" href="http://example.com/favicon.ico" type="image/vnd.microsoft.icon" /> -->
+    <link rel="icon" href="./mx.jpg" />
+    <title>JavaScript</title>
+<link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <!-- <div class="progress"></div> -->
+    <!-- <div class='loader'></div> -->
+    <div id="one"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="./callApplyBind.js"></script>
+    <!-- <script src="./callApplyBind copy.js"></script> -->
+    <script>
+      // function add(a) {
+      //   if (!a) {
+      //     return a;
+      //   }
+      //   function sum(b) {
+      //     sum = a + b;
+      //     return sum;
+      //   }
+
+      //   return sum;
+      // }
+
+   function add(a) {
+     function sum(b) {
+       a = a + b;
+       return sum;
+     }
+     sum.toString = function () {
+       return a;
+     };
+     return sum;
+   }
+
+
+  //  console.log("add===", add(1).toString(), add(1)(2).toString(), add(1)(2)(3).toString(), add(1)(2)(3)(4).toString());
+
+ 
+    
+    </script>
+  </body>
+</html>

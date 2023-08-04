@@ -1,0 +1,96 @@
+<!--
+ * @Author: RONGWEI PENG
+ * @Date: 2023-02-15 21:14:57
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2023-03-12 10:12:14
+ * @FilePath: /js_project/拖动排序1.html
+-->
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    ul {
+      width: 500px;
+      border: 1px solid #000;
+      overflow: hidden;
+    }
+
+    li {
+      list-style: none;
+      width: 40px;
+      height: 40px;
+      margin: 10px;
+      background-color: pink;
+      float: left;
+    }
+
+    #box {
+      width: 500px;
+      height: 500px;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+
+<body>
+  <ul id="list">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+    <li>6</li>
+    <li>7</li>
+    <li>8</li>
+    <li>9</li>
+    <li>10</li>
+  </ul>
+  <button onclick="getLocation()">get当前元素的位置</button>
+
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script>
+    // 给所有li元素添加可拖动属性draggable和id
+    $('#list li').each((index, el) => {
+      $(el).attr({ draggable: 'true', id: 'li' + index })
+    });
+
+    // 所有li元素注册拖动事件并设置数据
+    $('#list li').on('dragstart',function(e){
+      let ev = e.originalEvent;
+      ev.dataTransfer.setData("liId", ev.target.id); // 设置被拖数据的数据类型和值
+    })
+
+    // 在#list中注册 可放置被拖动的数据   默认的拖动数据不可放置,所以要阻止默认事件
+    $('#list').on('dragover',function(e){
+      let ev = e.originalEvent;
+      ev.preventDefault()
+    })
+
+    // 被拖动数据的放置事件
+    $('#list').on('drop',function(e){
+      let ev = e.originalEvent;
+      ev.preventDefault(); // drop 事件的默认行为是以链接形式打开,阻止默认行为
+      var id = ev.dataTransfer.getData("liId"); // 获取被拖动的数据
+      ev.target.appendChild(document.getElementById(id));
+
+      // ev.toElement.id 放置位置元素的id
+      console.log(ev.toElement.id );
+      if(ev.toElement.id == 'list'){ // 放置在#list上,追加到最后
+        $('#list').append($('#'+id))
+      }else{ // 放置在其他li元素上,追加到当前li元素的前一位
+        $(ev.toElement).before($('#'+id))
+      }
+    })
+
+    function getLocation(){
+      console.log($('#list li'));
+    }
+ 
+  </script>
+</body>
+
+</html>

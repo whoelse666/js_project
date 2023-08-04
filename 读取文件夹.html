@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>读取文件夹</title>
+  </head>
+  <body>
+    <button id="start">start</button>
+    <script>
+      const btn = document.getElementById('start');
+
+      btn.addEventListener('click', readDir);
+
+      async function readDir() {
+        try {
+          const handler = await window.showDirectoryPicker();
+          const tree = await processHandle(handler);
+          console.log('handler',handler);
+          console.log('tree',tree);
+        } catch (error) {
+          console.log('error',error);
+        }
+      }
+
+      async function processHandle(handle) {
+        if (handle.kind == 'file') {
+          return handle;
+        }
+        handle.children = [];
+        const values = await handle.values();
+        // const iter = await handle.entries();
+        for await (const info of values) {
+          //  console.log('info', info);
+          const subHandle = await processHandle(info );
+          handle.children.push(subHandle);
+        }
+        return handle;
+      }
+    </script>
+  </body>
+</html>

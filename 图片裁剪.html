@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片裁剪</title>
+    <style>
+      #img {
+     width: 200px;
+        height: auto;
+    
+      }
+
+      img {
+        clip-path: polygon(0 0, 100px 0, 100px 100px, 0 100px);
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" id="input" />
+    <img src="" alt="" id="img" />
+<canvas id="canvas" width="200" height="200">
+    <hr />
+
+    <script>
+      const fileInput = document.querySelector("#input");
+      const preView = document.querySelector("#img");
+      fileInput.addEventListener("change", e => {
+        console.log("console", fileInput.files[0]);
+        const reader = new FileReader();
+        reader.onload = e => {
+          console.log("reader", e.target.result);
+          preView.src = e.target.result;
+
+          const canvas = document.getElementById("canvas");
+          const ctx = canvas.getContext("2d");
+ 
+          preView.addEventListener("load", e => {
+            // ctx.drawImage(preView, 0, 0, preView.width, preView.height );
+          });
+        };
+        const file = fileInput.files[0];
+        reader.readAsDataURL(file);
+      });
+
+      /**
+       * 压缩图片
+       * @param {*} src 图片的src
+       * @param {*} resolve  回调函数，用于处理异步，比如 promise 返回
+       * @param {*} fileName 文件名称
+       */
+      // const compressImage = (src, resolve, fileName = "img") => {
+      //   const image = new Image(); // 新建一个img标签（还没嵌入DOM节点)
+      //   image.src = src; // 将图片的路径设成file路径
+      //   image.onload = () => {
+      //     const canvas = document.createElement("canvas");
+      //     const context = canvas.getContext("2d");
+
+      //     // 图片原始尺寸
+      //     const originWidth = image.width;
+      //     const originHeight = image.height;
+
+      //     // 最大尺寸限制
+      //     const maxWidth = Math.min(image.width, 1200);
+      //     const maxHeight = Math.min(image.height, 1200);
+      //     // 目标尺寸
+      //     let targetWidth = originWidth;
+      //     let targetHeight = originHeight;
+
+      //     let quality = 0.92; // 默认质量
+      //     // 图片尺寸超过 1200 * 1200 的限制
+      //     if (originWidth > maxWidth || originHeight > maxHeight) {
+      //       if (originWidth / originHeight > maxWidth / maxHeight) {
+      //         // 更宽，按照宽度限定尺寸
+      //         targetWidth = maxWidth;
+      //         targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+      //       } else {
+      //         // 更高，按照高度限定尺寸
+      //         targetHeight = maxHeight;
+      //         targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+      //       }
+      //     }
+
+      //     canvas.width = targetWidth;
+      //     canvas.height = targetHeight;
+
+      //     // 绘制图片
+      //     context.drawImage(image, 0, 0, targetWidth, targetHeight);
+      //     // 获取图片url, base64格式
+      //     const data = canvas.toDataURL("image/jpeg", quality);
+      //     // base64格式 转为 file 格式，用于上传
+      //     const newfile = dataURLtoFile(data, `${fileName}.jpeg`);
+      //     resolve(newfile, data);
+      //   };
+      // };
+
+      // /**
+      //  * base64转file对象
+      //  * @param {*} dataurl 图片base64 数据
+      //  * @param {*} filename 文件名称
+      //  * @returns
+      //  */
+      // const dataURLtoFile = (dataurl, filename) => {
+      //   const arr = dataurl.split(",");
+      //   const mime = arr[0].match(/:(.*?);/)[1];
+      //   const bstr = atob(arr[1]);
+      //   let n = bstr.length;
+      //   const u8arr = new Uint8Array(n);
+      //   // eslint-disable-next-line no-plusplus
+      //   while (n--) {
+      //     u8arr[n] = bstr.charCodeAt(n);
+      //   }
+      //   return new File([u8arr], filename, { type: mime }); // 转成了jpeg格式
+      // };
+
+      // // 裁剪图片
+      // convertImage = file => {
+      //   const that = this;
+      //   return new Promise(resolve => {
+      //     const image = new Image(); // 新建一个img标签（还没嵌入DOM节点)
+      //     image.src = file; // 将图片的路径设成file路径
+      //     image.onload = () => {
+      //       const canvas = document.createElement("canvas");
+      //       const context = canvas.getContext("2d");
+
+      //       const targetWidth = 210; // 裁剪目标宽度 210 px
+      //       const targetHeight = image.height; // 裁剪目标高度 image.height 图片本身高度
+
+      //       canvas.width = targetWidth; // canvas宽度 210 px
+      //       canvas.height = targetHeight; // canvas宽度 targetHeight
+
+      //       context.drawImage(image, 115, 0, targetWidth, targetHeight, 0, 0, targetWidth, targetHeight); // 裁剪图片
+      //       const data = canvas.toDataURL("image/jpeg", 1);
+      //       resolve(data);
+      //     };
+      //   });
+      // };
+
+      // readImage = file =>
+      //   new Promise(resolve => {
+      //     // 获取文件名
+      //     const fileName = file.name.substring(0, file.name.indexOf("."));
+      //     const reader = new FileReader(); // 读取file
+      //     reader.readAsDataURL(file);
+      //     reader.onloadend = e => {
+      //       const imgSrc = e.target.result; // 获取文件的src
+      //       // ... 执行后续操作
+      //     };
+      //   });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<!--
+ * @Author: RONGWEI PENG
+ * @Date: 2022-08-03 10:38:49
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2022-08-03 11:28:56
+ * @FilePath: \testProject\st\de.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">提交</button>
+
+    <script>
+      // document.getElementById("btn").addEventListener("click", debounce(submit));
+      document.getElementById("btn").addEventListener("click", throttle(submit));
+      let i = 0;
+
+      function throttle(fn, wait = 1000) {
+        let pre = Date.now();
+        const that = this;
+        return function () {
+          let now = Date.now();
+          if (now - pre >= wait) {
+            console.log("now-pre", now - pre);
+           pre = Date.now();
+          }
+        };
+      }
+
+      /*       function debounce(fn, wait = 1000) {
+        let timer;
+        const that = this;
+        return function () {
+          i++;
+          if (timer) {
+            clearInterval(timer);
+          }
+          timer = setTimeout(function () {
+            fn.apply(that, arguments);
+          }, wait);
+        };
+      } */
+      function submit() {
+        console.log("console", i);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!--
+ * @Author: RONGWEI PENG
+ * @Date: 2022-08-02 16:50:33
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2022-08-02 17:15:29
+ * @FilePath: \testProject\st\newfn.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function Person(name) {
+        this.name = name;
+      }
+      var p1 = new Person("John");
+
+      function Cup(cupCover, cupBody, cupBottom) {
+        if (this instanceof Cup) {
+          this.cupCover = cupCover;
+          this.cupBody = cupBody;
+          this.cupBottom = cupBottom;
+        } else {
+          return new Cup(cupCover, cupBody, cupBottom);
+        }
+      }
+      let cup = Cup('iron', 'plastic', 'rubber')
+console.log('cup.cupCover ',cup.cupCover ); 
+    </script>
+  </body>
+</html>

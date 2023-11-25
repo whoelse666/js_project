@@ -1,0 +1,32 @@
+ $btnColors: #409eff, #67c23a, #8b590f, #f54343, #6c6d71;
+
+    .btn{
+      width: 100px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      display: inline-block;
+    }
+ @for $i from 1 through length($btnColors) {
+   .btn.type-#{$i} {
+     $color: nth($btnColors, $i);
+     background: $color;
+     color: #fff;
+
+     &:hover {
+       background: lighten($color, 10%);
+     }
+
+     &:active {
+       background: darken($color, 10%);
+     }
+
+     &:disabled {
+       background: lighten($color, 20%);
+       color: white;
+     }
+
+   }
+ }

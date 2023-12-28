@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端调取摄像头并实现拍照功能</title>
+
+    <style>
+      #my-video {
+        width: 300px;
+        height: 300px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <video src="" id="my-video"></video>
+    <canvas id="my-canvas" width="200" height="200"></canvas>
+
+    <div id="wrapper"></div>
+    <button onclick="shoot()" class="w-100px leading-100px text-center bg-black text-30px">拍摄</button>
+    <script>
+      const videoEl = document.getElementById("my-video");
+      const wrapper = document.getElementById("wrapper");
+      checkCamera();
+
+      function shoot() {
+        if (!videoEl) return;
+        const canvas = document.getElementById("my-canvas");
+        canvas.width = videoEl.offsetWidth;
+        canvas.height = videoEl.offsetHeight;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        wrapper.appendChild(canvas); //将 canvas 投到页面上
+      }
+
+      async function checkCamera() {
+        const navigator = window.navigator.mediaDevices;
+        const devices = await navigator.enumerateDevices();
+        if (devices) {
+          const stream = await navigator.getUserMedia({
+            audio: false,
+            video: {
+              width: 300,
+              height: 300,
+              // facingMode: { exact: "environment" }, //强制后置摄像头
+              facingMode: "user" //前置摄像头
+            }
+          });
+          if (!videoEl) return;
+          videoEl.srcObject = stream;
+          videoEl.play();
+        }
+      }
+    </script>
+  </body>
+</html>

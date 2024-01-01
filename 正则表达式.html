@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>正则表达式</title>
+  </head>
+  <body>
+    <script>
+      /* 
+转义字符
+\s : 空格
+\S : 非空格
+\d : 数字
+\D : 非数字
+\w : 字符 ( 字母 ，数字，下划线_ )
+\W : 非字符
+.（点）——任意字符
+\. : 真正的点
+\b : 独立的部分 （ 起始，结束，空格 ）
+\B : 非独立的部分
+*/
+
+      /* 
+常用的一些表单校验
+匹配中文：[\u4e00-\u9fa5] //中文ACALL码的范围
+行首行尾空格：^\s*|\s*$ //首行出现任意个空格或者尾行出现任意个空格（任意表示也可以没有空格）
+
+Email：^\w+@[a-z0-9]+(\.[a-z]+){1,3}$
+//起始至少为一个字符(\w字母，数字或者下划线)，然后匹配@,接着为任意个字母或者数字，\.代表真正的点，.后面为至少一个的字符（a-z）,同时这个(比如.com)整体为一个子项作为结束，可以出现1-3次。因为有的邮箱是这样的.cn.net。（xxxx.@qq.com xxxx.@163.com xxxx.@16.cn.net ）
+
+网址：[a-zA-z]+://[^\s]* http://......
+//匹配不分大小写的任意字母，接着是//,后面是非空格的任意字符
+
+邮政编码：[1-9]\d{5} //起始数字不能为0，然后是5个数字
+身份证：[1-9]\d{14}|[1-9]\d{17}|[1-9]\d{16}x
+为了方便且不冲突，我们可以用json的格式 建立自己的空间，如下：
+
+
+var re = {
+email : /^\w+@[a-z0-9]+(\.[a-z]+){1,3}$/,
+number : /\d+/
+};
+
+re.email
+
+*/
+      // var str = "haj123sdk54hask33dkhalsd879";
+      // var re = /\d+/g;
+
+      /*     var str = "我爱北京天安门，天安门上太阳升。";
+      var re = /北京|天安门/g; // 找到北京 或者天安门 全局匹配
+      var str2 = str.replace(re, "*");
+      var str2 = str.replace(re, function (str) {
+        console.log(str); //用来测试：函数的第一个参数代表每次搜索到的符合正则的字符，所以第一次str指的是北京 第二次str是天安门 第三次str是天安门
+        var result = "";
+        for (var i = 0; i < str.length; i++) {
+          result += "*";
+        }
+        return result;
+      }); */
+
+      // var str = "2013-6-7";
+      // var re1 = /\d-+/g;
+      // console.log("test", re1.test(str));
+      // console.log("search", str.search(re1));
+      // console.log("match", str.match(re1));
+      // console.log("replace", str.replace(re1, "*"));
+      // console.log("-------------------------------------------------------------------------");
+      /*  var str = "2013-6-7";
+      var re = /(\d+)(-)/g; */
+      // str = str.replace(re, function ($0, $1, $2) {
+      //   console.log("$0, $1, $2", $0, $1, $2);
+      //   //replace()中如果有子项，
+      //   //第一个参数：$0（匹配成功后的整体结果 2013- 6-）,
+      //   // 第二个参数 : $1(匹配成功的第一个分组，这里指的是\d 2013, 6)
+      //   //第三个参数 : $1(匹配成功的第二个分组，这里指的是- - - )
+      //   return $1 + "."; //分别返回2013. 6.
+      // });
+
+      // console.log("replace", str);
+      /*   console.log("1111replace", str.match(re));
+
+      var testStr = "now test001 test002";
+      var re2 = /test(\d+)/g;
+      var r = ""; */
+      // var r = re2.exec(testStr);
+
+      /*  while ((r = re2.exec(testStr))) {
+        console.log(r); //返回每次匹配成功的字符串，以及子项，分别弹出 ：test001 001,test002 002
+        console.log(r.input); //分别弹出： now test001 test002 now test001 test002
+        console.log(r[0]); //代表每次匹配成功的字符串 分别弹出： test001 test002
+        console.log(r[1]); //代表每次匹配成功字符串中的第一个子项 (\d+) 分别弹出：001 002
+        console.log(r.index); // 每次匹配成功的字符串中的第一个字符的位置，分别弹出：4 12
+        console.log(r.length); //分别弹出：2 2
+      } */
+
+      var str = "xabca xddcbaas abcb sssjds abcc sabcddcbaskssabcddcbaalsssdkjsabcddcbassdss";
+      // var re = /one\b/; // e后面必须是独立的 可以是起始，空格，或结束
+      // var re = new RegExp(`\\bone\\b`);
+      // var re = /(a)(b)(c)\2/; //
+      // var re = new RegExp(`\\bone\\b`);
+
+      /*   var arr = str.split("");
+      str = arr.sort().join("");
+      console.log(str);
+      var value = "";
+      var index = 0;
+      var re = /(\w)\1+/g; //匹配字符，且重复这个字符，重复次数至少一次。
+      str.replace(re, function ($0, $1) {
+        console.log(index, $0, $0.length, $1);
+        if (index < $0.length) {
+          //如果index保存的值小于$0的长度就进行下面的操作
+          index = $0.length; // 这样index一直保存的就在最大的长度
+          value = $1; //value保存的是出现最多的这个字符
+        console.log(value);
+        }
+      }); */
+
+      /*     var str = "345678956@qq.com";//@qq.com
+      // var re = /^[1-9]\d{4,11}$/;
+      var re = /^[\d]{4,11}@qq.com$/;
+      console.log(re.test(str));
+      console.log(str.match(re)); */
+
+      var str = " hello ";
+      console.log("trim(str)", str.length);
+      console.log("trim(str)", trim(str).length);
+      function trim(str) {
+        var re = /^\s+|\s+$/g;
+        console.log(str.match(re));
+
+        return str.replace(re, ""); //把空格替换成空
+      }
+
+    </script>
+  </body>
+</html>

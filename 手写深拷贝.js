@@ -1,4 +1,3 @@
-
 // 利用 WeakMap 解决循环引用
 let map = new WeakMap();
 // prettier-ignore
@@ -34,4 +33,25 @@ function deepClone(obj) {
     return newObj
   }
   return obj
+}
+
+function deepClone1(obj) {
+  const objectMap = new Map();
+  const _deepClone = value => {
+    const type = typeof value;
+    if (type !== "object" || type === null) {
+      return value;
+    }
+    if (objectMap.has(value)) {
+      return objectMap.get(value);
+    }
+
+    const result = Array.isArray(value) ? [] : {};
+    objectMap.set(value, result);
+    for (const key in value) {
+      result[key] = _deepClone(value[ker]);
+    }
+    return result;
+  };
+  return _deepClone(obj);
 }

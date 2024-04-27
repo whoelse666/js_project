@@ -1,17 +1,34 @@
-var isPerfectSquare = function (x) {
-  let l = 0,
-    r = x;
-  while (l <= r) {
-    let m = l + ((r - l) >> 1);
-    if (m * m < x) {
-      l = m + 1;
-    } else if (m * m > x) {
-      r = m - 1;
-    } else {
-      return true;
+(function (nums, target) {
+  // 四数之和
+    const len = nums.length;
+    if (len < 4) return [];
+    nums.sort((a, b) => a - b);
+    const res = [];
+    for (let i = 0; i < len - 3; i++) {
+      // 去重i
+      if (i > 0 && nums[i] === nums[i - 1]) continue;
+      for (let j = i + 1; j < len - 2; j++) {
+        // 去重j
+        if (j > i + 1 && nums[j] === nums[j - 1]) continue;
+        let l = j + 1,
+          r = len - 1;
+        while (l < r) {
+          const sum = nums[i] + nums[j] + nums[l] + nums[r];
+          if (sum < target) {
+            l++;
+            continue;
+          }
+          if (sum > target) {
+            r--;
+            continue;
+          }
+          res.push([nums[i], nums[j], nums[l], nums[r]]);
+          // 对nums[left]和nums[right]去重
+          while (l < r && nums[l] === nums[++l]);
+          while (l < r && nums[r] === nums[--r]);
+        }
+      }
     }
-  }
-      return false;
-};
-
-isPerfectSquare(16);
+    return res;
+  };
+})(16);

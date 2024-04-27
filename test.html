@@ -40,45 +40,46 @@
     //   return arr;
     // }
 
-    threeSum([-1, 0, 1, 2, -1, -4]);
+    // threeSum([-1, 0, 1, 2, -1, -4]);
 
-    function threeSum(nums) {
-      if (nums == null) {
+    (function (nums, target) {
+      if (nums == null || nums.length < 4) {
         return [];
       }
+      const arr = [],
+        len = nums.length;
+      let l = 0,
+        r = len - 1;
       nums.sort((a, b) => a - b);
-
-      const len = nums.length;
-      let arr = [],
-        left = 0,
-        right = len - 1;
-
+      // for (let j = 0; j < len; j++) {
+      //   if (j > 0 && nums[j] == nums[j - 1]) {
+      //     continue;
+      //   }
       for (let i = 0; i < len; i++) {
-        if (nums[i] > 0) return arr;
+        l = i+1;
+        r = len - 1;
         if (i > 0 && nums[i] == nums[i - 1]) {
           continue;
         }
-        left = i + 1;
-        right = len - 1;
-        while (left < right) {
-          const sum = nums[i] + nums[left] + nums[right];
-          if (sum > 0) right--;
-          else if (sum < 0) left++;
-          else {
-            resArr.push([nums[i], nums[left], nums[right]]);
-            left++;
-            right--;
-            while (left < right && nums[right] === nums[right + 1]) {
-              right--;
-            }
-            while (left < right && nums[left] === nums[left - 1]) {
-              left++;
-            }
+        const sum = /* nums[j] + */ nums[i] + nums[l] + nums[r];
+        console.log("l,r,sum", i, l, r, sum);
+        if (sum > target) r--;
+        else if (sum < target) l++;
+        else {
+          arr.push([nums[i], nums[l], nums[r]]);
+          while (l < len && nums[l] == nums[l + 1]) {
+            l++;
           }
+          while (r < len && nums[r] == nums[r - 1]) {
+            r--;
+          }
+          l++;
+          r--;
         }
       }
+      // }
       console.log("arr", arr);
       return arr;
-    }
+    })([1, 0, -1, -2, 3, 4, 2], 8);
   </script>
 </html>

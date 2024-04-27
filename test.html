@@ -46,40 +46,39 @@
       if (nums == null || nums.length < 4) {
         return [];
       }
-      const arr = [],
-        len = nums.length;
-      let l = 0,
-        r = len - 1;
+      const len = nums.length;
+      const res = [];
       nums.sort((a, b) => a - b);
-      // for (let j = 0; j < len; j++) {
-      //   if (j > 0 && nums[j] == nums[j - 1]) {
-      //     continue;
-      //   }
-      for (let i = 0; i < len; i++) {
-        l = i+1;
-        r = len - 1;
-        if (i > 0 && nums[i] == nums[i - 1]) {
-          continue;
-        }
-        const sum = /* nums[j] + */ nums[i] + nums[l] + nums[r];
-        console.log("l,r,sum", i, l, r, sum);
-        if (sum > target) r--;
-        else if (sum < target) l++;
-        else {
-          arr.push([nums[i], nums[l], nums[r]]);
-          while (l < len && nums[l] == nums[l + 1]) {
-            l++;
+
+      for (let j = 0; j < len - 3; j++) {
+        if (j > 0 && nums[j] === nums[j - 1]) continue;
+
+        for (let i = j + 1; i < len - 2; i++) {
+          // 去重1
+          if (i > j + 1 && nums[i] === nums[i - 1]) continue;
+          let left = i + 1,
+            right = len - 1;
+          console.log(j, left, right);
+
+          while (left < right) {
+            console.log("j,i,left,right", j, i, left, right);
+            const sum = nums[j] + nums[i] + nums[left] + nums[right];
+            if (sum === target) {
+              res.push([nums[j], nums[i], nums[left], nums[right]]);
+              while (left < right && nums[left] == nums[left + 1]) left++;
+              while (left < right && nums[right] == nums[right - 1]) right--;
+              left++;
+              right--;
+            } else if (sum < target) {
+              left++;
+            } else {
+              right--;
+            }
           }
-          while (r < len && nums[r] == nums[r - 1]) {
-            r--;
-          }
-          l++;
-          r--;
         }
       }
-      // }
-      console.log("arr", arr);
-      return arr;
-    })([1, 0, -1, -2, 3, 4, 2], 8);
+      console.log("res", res);
+      return res;
+    })([0, 0, 0, 0], 0);
   </script>
 </html>

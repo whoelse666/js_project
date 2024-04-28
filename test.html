@@ -41,19 +41,50 @@
     // }
 
     // threeSum([-1, 0, 1, 2, -1, -4]);
-const findLengthOfLCIS = (nums) => {
-  // 674. 最长连续递增序列
-    let dp = new Array(nums.length).fill(1);
-    for(let i = 0; i < nums.length - 1; i++) {
-        if(nums[i+1] > nums[i]) {      // 不满足nums[i+1] > nums[i] 则dp[i]计数就会从1 再次开始逐渐+1,最后取最大值
-            dp[i+1] = dp[i]+ 1;
+    const findLengthOfLCIS = nums => {
+      // 674. 最长连续递增序列
+      let dp = new Array(nums.length).fill(1);
+      for (let i = 0; i < nums.length - 1; i++) {
+        if (nums[i + 1] > nums[i]) {
+          // 不满足nums[i+1] > nums[i] 则dp[i]计数就会从1 再次开始逐渐+1,最后取最大值
+          dp[i + 1] = dp[i] + 1;
         }
-    }
-    return Math.max(...dp);
-};
+      }
+      return Math.max(...dp);
+    };
+
     (function (nums, target) {
-    
-    })([1, 3, 5, 4, 7,8,9,10], 0);
+      const n = nums.length;
+      if (n <= 1) {
+        return n;
+      }
+      let max = 1,
+        dp = [nums[0]];
+      for (let i = 0; i < n; i++) {
+        if (nums[i] > dp[max]) {
+          dp.push(nums[i]);
+          max++;
+          continue;
+        }
+        let left = 0,
+          right = max,
+          pos = 0,
+          mid;
+        while (left <= right) {
+          mid = Math.ceil((left + right) / 2);
+          if (dp[mid] < nums[i]) {
+            left = mid + 1;
+            pos = mid;
+          } else {
+            right = mid - 1;
+          }
+        }
+        console.log('pos',pos);
+        dp[pos + 1] = nums[i];
+        console.log("dp", dp);
+      }
+      return max;
+    })([1, 9, 2, 5, 3, 7, 21, 18], 0);
   </script>
 </html>
 <!-- [-5,-3,-2,-1,0,1,2,3,4,7,8,9] -->

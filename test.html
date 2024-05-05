@@ -53,38 +53,18 @@
       return Math.max(...dp);
     };
 
-    (function (nums, target) {
-      const n = nums.length;
-      if (n <= 1) {
-        return n;
+    (repeatedSubstringPattern = function (s) {
+      let l = 0,
+        r = s.length - 1;
+      while (l < r) {
+        const temp = s[l];
+        s[l] = s[r];
+        s[r] = temp;
+        l++;
+        r--;
       }
-      let max = 1,
-        dp = [nums[0]];
-      for (let i = 0; i < n; i++) {
-        if (nums[i] > dp[max]) {
-          dp.push(nums[i]);
-          max++;
-          continue;
-        }
-        let left = 0,
-          right = max,
-          pos = 0,
-          mid;
-        while (left <= right) {
-          mid = Math.ceil((left + right) / 2);
-          if (dp[mid] < nums[i]) {
-            left = mid + 1;
-            pos = mid;
-          } else {
-            right = mid - 1;
-          }
-        }
-        console.log('pos',pos);
-        dp[pos + 1] = nums[i];
-        console.log("dp", dp);
-      }
-      return max;
-    })([1, 9, 2, 5, 3, 7, 21, 18], 0);
+      return s;
+    })(["h", "e", "l", "l", "o"], 3);
   </script>
 </html>
 <!-- [-5,-3,-2,-1,0,1,2,3,4,7,8,9] -->

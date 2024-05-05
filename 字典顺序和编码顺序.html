@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>字典顺序和编码顺序</title>
+  </head>
+  <body>
+    <script>
+      const names = ["叶良辰", "福尔康", "赵日天"];
+      console.log("叶".localeCompare("福"));
+      console.log("叶".localeCompare("赵"));
+      names.sort((a, b) => a.localeCompare(b));
+      console.log('names',names);
+    </script>
+  </body>
+</html>

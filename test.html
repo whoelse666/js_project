@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>drag 图片拖拽验证</title>
+    <title></title>
   </head>
   <body></body>
   <script>
@@ -52,6 +52,118 @@
       }
       return Math.max(...dp);
     };
+
+    /**
+     * >缀表统一减一
+     * @param {string} s
+     * @return {boolean}
+     */
+    var repeatedSubstringPattern = function (s) {
+      if (s.length === 0) return false;
+
+      const getNext = s => {
+        let next = [];
+        let j = -1;
+
+        next.push(j);
+
+        for (let i = 1; i < s.length; ++i) {
+          while (j >= 0 && s[i] !== s[j + 1]) j = next[j];
+          if (s[i] === s[j + 1]) j++;
+          next.push(j);
+        }
+
+        return next;
+      };
+
+      let next = getNext(s);
+
+      if (next[next.length - 1] !== -1 && s.length % (s.length - (next[next.length - 1] + 1)) === 0) return true;
+      return false;
+    };
+
+    /**
+     *  > 前缀表统一不减一
+     * @param {string} s
+     * @return {boolean}
+     */
+    var repeatedSubstringPattern1 = function (s) {
+      if (s.length === 0) return false;
+
+      const getNext = s => {
+        let next = [];
+        let j = 0;
+
+        next.push(j);
+
+        for (let i = 1; i < s.length; ++i) {
+          while (j > 0 && s[i] !== s[j]) j = next[j - 1];
+          if (s[i] === s[j]) j++;
+          next.push(j);
+        }
+
+        return next;
+      };
+
+      let next = getNext(s);
+      if (next[next.length - 1] !== 0 && s.length % (s.length - next[next.length - 1]) === 0) return true;
+      return false;
+    };
+    repeatedSubstringPattern1("abcabcabc");
+
+
+// 使用两个数组的栈方法（push, pop） 实现队列
+/**
+* Initialize your data structure here.
+*/
+var MyQueue = function() {
+   this.stackIn = [];
+   this.stackOut = [];
+};
+
+/**
+* Push element x to the back of queue. 
+* @param {number} x
+* @return {void}
+*/
+MyQueue.prototype.push = function(x) {
+   this.stackIn.push(x);
+};
+
+/**
+* Removes the element from in front of queue and returns that element.
+* @return {number}
+*/
+MyQueue.prototype.pop = function() {
+   const size = this.stackOut.length;
+   if(size) {
+       return this.stackOut.pop();
+   }
+   while(this.stackIn.length) {
+       this.stackOut.push(this.stackIn.pop());
+   }
+   return this.stackOut.pop();
+};
+
+/**
+* Get the front element.
+* @return {number}
+*/
+MyQueue.prototype.peek = function() {
+   const x = this.pop();
+   this.stackOut.push(x);
+   return x;
+};
+
+/**
+* Returns whether the queue is empty.
+* @return {boolean}
+*/
+MyQueue.prototype.empty = function() {
+   return !this.stackIn.length && !this.stackOut.length
+};
+
+
 
     (repeatedSubstringPattern = function (s) {
       let l = 0,

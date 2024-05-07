@@ -111,59 +111,90 @@
     };
     repeatedSubstringPattern1("abcabcabc");
 
+    // 使用两个数组的栈方法（push, pop） 实现队列
+    /**
+     * Initialize your data structure here.
+     */
+    var MyQueue = function () {
+      this.stackIn = [];
+      this.stackOut = [];
+    };
 
-// 使用两个数组的栈方法（push, pop） 实现队列
-/**
-* Initialize your data structure here.
-*/
-var MyQueue = function() {
-   this.stackIn = [];
-   this.stackOut = [];
-};
+    /**
+     * Push element x to the back of queue.
+     * @param {number} x
+     * @return {void}
+     */
+    MyQueue.prototype.push = function (x) {
+      this.stackIn.push(x);
+    };
 
-/**
-* Push element x to the back of queue. 
-* @param {number} x
-* @return {void}
-*/
-MyQueue.prototype.push = function(x) {
-   this.stackIn.push(x);
-};
+    /**
+     * Removes the element from in front of queue and returns that element.
+     * @return {number}
+     */
+    MyQueue.prototype.pop = function () {
+      const size = this.stackOut.length;
+      if (size) {
+        return this.stackOut.pop();
+      }
+      while (this.stackIn.length) {
+        this.stackOut.push(this.stackIn.pop());
+      }
+      return this.stackOut.pop();
+    };
 
-/**
-* Removes the element from in front of queue and returns that element.
-* @return {number}
-*/
-MyQueue.prototype.pop = function() {
-   const size = this.stackOut.length;
-   if(size) {
-       return this.stackOut.pop();
-   }
-   while(this.stackIn.length) {
-       this.stackOut.push(this.stackIn.pop());
-   }
-   return this.stackOut.pop();
-};
+    /**
+     * Get the front element.
+     * @return {number}
+     */
+    MyQueue.prototype.peek = function () {
+      const x = this.pop();
+      this.stackOut.push(x);
+      return x;
+    };
 
-/**
-* Get the front element.
-* @return {number}
-*/
-MyQueue.prototype.peek = function() {
-   const x = this.pop();
-   this.stackOut.push(x);
-   return x;
-};
+    /**
+     * Returns whether the queue is empty.
+     * @return {boolean}
+     */
+    MyQueue.prototype.empty = function () {
+      return !this.stackIn.length && !this.stackOut.length;
+    };
 
-/**
-* Returns whether the queue is empty.
-* @return {boolean}
-*/
-MyQueue.prototype.empty = function() {
-   return !this.stackIn.length && !this.stackOut.length
-};
+    var MyStack = function () {
+      this.stack = [];
+    };
 
+    /**
+     * @param {number} x
+     * @return {void}
+     */
+    MyStack.prototype.push = function (x) {
+      this.stack.push(x);
+    };
 
+    /**
+     * @return {number}
+     */
+    MyStack.prototype.pop = function () {
+      const size = this.stack.length;
+      return this.stack.splice(size - 1, 1)[0];
+    };
+
+    /**
+     * @return {number}
+     */
+    MyStack.prototype.top = function () {
+      return this.stack[this.stack.length - 1];
+    };
+
+    /**
+     * @return {boolean}
+     */
+    MyStack.prototype.empty = function () {
+      return !this.stack.length;
+    };
 
     (repeatedSubstringPattern = function (s) {
       let l = 0,

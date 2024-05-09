@@ -208,6 +208,22 @@
       }
       return s;
     })(["h", "e", "l", "l", "o"], 3);
+
+    let length = 10;
+    function fn() {
+      console.log("this.length", this, this.length);
+      return this.length + 1;
+    }
+    const obj = {
+      length: 5,
+      test1: function () {
+        return fn();
+      },
+      test2: fn
+    };
+    // obj.test2 = fn;
+    console.log(1, obj.test1()); // undefined + 1 => NaN
+    console.log(2, obj.test2()); // 6
   </script>
 </html>
 <!-- [-5,-3,-2,-1,0,1,2,3,4,7,8,9] -->

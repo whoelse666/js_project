@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>给fetch添加超时功能</title>
+  </head>
+  <body>
+    <script>
+      // 给fetch添加超时功能
+      // function fetchWithTimeout(url, options, timeout) {
+      //   return new Promise((resolve, reject) => {
+      //     const controller = new AbortController();
+      //     const { signal } = controller;
+
+      //     const fetchPromise = fetch(url, { ...options, signal });
+
+      //     const timeoutId = setTimeout(() => {
+      //       controller.abort();
+      //     });
+      //   });
+      // }
+
+      function createRequestWithTimeout(timeout = 3000) {
+        return function (urL, options) {
+          return new Promise((resolve, reject) => {
+            const abort = new AbortController();
+            options = options || {};
+            if (options.signal) {
+              options.signal.addEventListener("abort", () => {
+                abort.abort();
+              });
+            }
+            options.signal = abort.signal;
+            setTimeout(() => {
+              reject(new Error("Request timeout"));
+            }, timeout);
+            fetch(url, options).then(resolve, reject);
+          });
+        };
+      }
+    </script>
+  </body>
+</html>

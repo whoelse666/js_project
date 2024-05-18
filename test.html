@@ -7,6 +7,38 @@
     <title></title>
   </head>
   <body></body>
+
+ <script src="./手写深拷贝.js"></script> 
+  <!-- <script>
+    // [原型链图解]https://img1.sycdn.imooc.com/5ba1b5a200019d4f06000751.jpg
+    var obj1 = {
+      name: "obj1"
+    };
+    function Foo() {
+      this.name = "fn";
+      console.log("fn", this);
+    }
+    const fn = new Foo();
+    const log = console.log;
+    log(obj1.__proto__ === Object.prototype);
+    log(Object === Object.prototype.constructor);
+    log(Object.prototype.__proto__ === null);
+
+    log("----");
+    log(fn.__proto__ === Foo.prototype);
+    log(Foo.prototype.constructor === Foo);
+    log(Foo.prototype.__proto__ === Object.prototype);
+
+    log(Foo.__proto__ === Function.prototype);
+    log(Function.prototype.__proto__ === Object.prototype);
+    log(Object.prototype.__proto__ === null);
+
+    log("----");
+
+    log(Object.__proto__ === Function.prototype);
+ 
+  </script>
+
   <script>
     // function threeSum(nums) {
     //   if (nums == null) {
@@ -111,7 +143,7 @@
     };
     repeatedSubstringPattern1("abcabcabc");
 
-    // 使用两个数组的栈方法（push, pop） 实现队列
+    // 使用两个数组的栈方法(push, pop) 实现队列
     /**
      * Initialize your data structure here.
      */
@@ -197,19 +229,60 @@
     };
 
     (repeatedSubstringPattern = function (s) {
-      let l = 0,
-        r = s.length - 1;
-      while (l < r) {
-        const temp = s[l];
-        s[l] = s[r];
-        s[r] = temp;
-        l++;
-        r--;
-      }
-      return s;
-    })(["h", "e", "l", "l", "o"], 3);
+      let map = new Map([
+        [")", "("],
+        ["]", "["],
+        ["}", "{"]
+      ]);
+      let arr = [];
+      for (let i = 0; i < s.length; i++) {
+        if (map.has(s[i])) {
+          //找到则为右括号，需要找对应左括号
+          // arr.length ==0 则第一位为右括号，不成立；
+          // arr[arr.length - 1] !== map.get(s[i]) 和数组 arr 最后一个括号不成对，则不成立
+          console.log("s[i]", s[i], map.get(s[i]));
 
-    let length = 10;
+          if (!arr.length || arr[arr.length - 1] !== map.get(s[i])) {
+            return false;
+          }
+          // 找到对应括号则删除arr成对的的（也就是 arr 最后一位）
+          arr.pop();
+        } else {
+          arr.push(s[i]);
+        }
+      }
+      return !arr.length;
+      /*     if (!s || s.length % 2 !== 0) return false;
+      let res = false;
+      let arr = [];
+      let obj = {
+        "(": ")",
+        "{": "}",
+        "[": "]",
+      };
+      let objR = {
+        ")": "(",
+        "}": "{",
+        "]": "["
+      };
+
+      for (let i = 0; i < s.length; i++) {
+        if (obj[s[i]]) {
+          arr.push(s[i]);
+          // console.log("arr", arr);
+        } else {
+          if (arr[arr.length - 1] !== objR[s[i]]) {
+            return false;
+          } else {
+            arr.pop();
+            console.log("pop", arr);
+          }
+        }
+      }
+      return arr.length === 0; */
+    })("()[]{}", 3);
+
+    /*   let length = 10;
     function fn() {
       console.log("this.length", this, this.length);
       return this.length + 1;
@@ -223,7 +296,6 @@
     };
     // obj.test2 = fn;
     console.log(1, obj.test1()); // undefined + 1 => NaN
-    console.log(2, obj.test2()); // 6
-  </script>
+    console.log(2, obj.test2()); // 6 */
+  </script> -->
 </html>
-<!-- [-5,-3,-2,-1,0,1,2,3,4,7,8,9] -->

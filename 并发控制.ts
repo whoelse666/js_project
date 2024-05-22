@@ -20,7 +20,7 @@ function concurrentControl<T>(asyncFuncs: (() => Promise<T>)[], limit: number): 
     await execute();
   };
   // 使用 Promise.race() 来控制并发数量
-  const promises = asyncFuncs.map(asyncFunc => {
+  const promises = asyncFuncs.map(async asyncFunc => {
     const executingCount = executing.length;
     if (executingCount >= limit) {
       await Promise.race(executing);

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>js控制一次只加载一张图片，加载完成后再加载下一张</title>
+
+    <style>
+      img {
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script>
+      const imgArrs = ["./mx.jpg", "./原型链.png", "./原型链图-导出.svg"]; // 图片地址
+      const content = document.getElementById("content");
+      const loadImg = () => {
+        if (!imgArrs.length) return;
+        const img = new Image(); // 新建一个Image对象
+        img.src = imgArrs[0];
+        img.setAttribute("class", "img-item");
+        img.onload = () => {
+          // 监听onload事件
+          setTimeout(() => { // 使用setTimeout可以更清晰的看清实现效果
+          content.appendChild(img);
+          imgArrs.shift();
+          loadImg();
+          }, 2000);
+        };
+        img.onerror = () => {
+          // do something here
+        };
+      };
+      loadImg();
+    </script>
+  </body>
+</html>

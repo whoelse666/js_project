@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片裁剪上传</title>
+
+  <style>
+
+
+  </style>
+</head>
+
+<body>
+  <input type="file" id="imageInput" accept="image/*">
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <button onclick="cropAndUpload()">裁剪上传</button>
+
+  <img id="targetImage" src="" alt="">
+  <script>
+
+    // 选择图片
+    document.getElementById('imageInput').addEventListener('change', function (event) {
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        var img = new Image();
+        img.src = e.target.result;
+
+        img.onload = function () {
+          var ctx = document.getElementById('canvas').getContext('2d');
+          ctx.drawImage(img, 0, 0, 400, 400);
+        };
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    // 裁剪并上传
+    function cropAndUpload() {
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      // 假设裁剪区域为 (50, 50) 到 (250, 250)
+      var croppedImageData = ctx.getImageData(50, 50, 200, 200);
+
+      var newCanvas = document.createElement('canvas');
+      newCanvas.width = 200;
+      newCanvas.height = 200;
+
+      var newCtx = newCanvas.getContext('2d');
+      newCtx.putImageData(croppedImageData, 0, 0);
+
+      // 将裁剪后的图片转换为 base64 字符串
+      var dataUrl = newCanvas.toDataURL('image/jpeg', 0.8);
+
+
+      document.getElementById('targetImage').src = dataUrl;
+      // 这里模拟上传操作，实际应用中需要将 dataUrl 发送到服务器
+      console.log( dataUrl);
+    }
+  </script>
+</body>
+
+</html>

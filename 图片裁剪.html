@@ -1,152 +1,507 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>图片裁剪</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传裁剪</title>
     <style>
-      #img {
-     width: 200px;
-        height: auto;
-    
-      }
-
-      img {
-        clip-path: polygon(0 0, 100px 0, 100px 100px, 0 100px);
-      }
-    </style>
-  </head>
-  <body>
-    <input type="file" id="input" />
-    <img src="" alt="" id="img" />
-<canvas id="canvas" width="200" height="200">
-    <hr />
-
-    <script>
-      const fileInput = document.querySelector("#input");
-      const preView = document.querySelector("#img");
-      fileInput.addEventListener("change", e => {
-        console.log("console", fileInput.files[0]);
-        const reader = new FileReader();
-        reader.onload = e => {
-          console.log("reader", e.target.result);
-          preView.src = e.target.result;
-
-          const canvas = document.getElementById("canvas");
-          const ctx = canvas.getContext("2d");
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 1000px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+.upload{
+    width: 50%;
+}
+.clipImage{
+    width: 100%;
+    position: relative;
+}
+.clipImage img{
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: block;
+}
+.clipImage::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+.clipImage #clipPathImg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    -webkit-clip-path: var(--clipPath);
+    clip-path: var(--clipPath);
+}
+/* 裁剪框 */
+#clip{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--clipWidth);
+    height: var(--clipHeight);
+    left: var(--clipX);
+    top: var(--clipY);
+    z-index: 3;
+    cursor: move;
+    /* border: 2px solid red; */
+    display: none;
+}
+#clip .lt{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #000;
+    left: -5px;
+    top: -5px;
+    cursor: nw-resize;
+}
+#clip .rt{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #000;
+    right: -5px;
+    top: -5px;
+    cursor: ne-resize;
+}
+#clip .lb{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #000;
+    left: -5px;
+    bottom: -5px;
+    cursor: sw-resize;
+}
+#clip .rb{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border: 1px solid #000;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+}
  
-          preView.addEventListener("load", e => {
-            // ctx.drawImage(preView, 0, 0, preView.width, preView.height );
-          });
-        };
-        const file = fileInput.files[0];
-        reader.readAsDataURL(file);
-      });
+/* 浏览 */
+.preview{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
 
-      /**
-       * 压缩图片
-       * @param {*} src 图片的src
-       * @param {*} resolve  回调函数，用于处理异步，比如 promise 返回
-       * @param {*} fileName 文件名称
-       */
-      // const compressImage = (src, resolve, fileName = "img") => {
-      //   const image = new Image(); // 新建一个img标签（还没嵌入DOM节点)
-      //   image.src = src; // 将图片的路径设成file路径
-      //   image.onload = () => {
-      //     const canvas = document.createElement("canvas");
-      //     const context = canvas.getContext("2d");
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="upload">
+            <input type="file" id="file" accept="image/*">
+            <div class="clipImage">
+                <img id="clipImage" src="">
+                <img id="clipPathImg" src="">
+                <div id="clip">
+                    <div class="lt"></div>
+                    <div class="rt"></div>
+                    <div class="rb"></div>
+                    <div class="lb"></div>
+                </div>
+            </div>
+        </div>
+        <div class="preview">
+            <div class="preview-img">
+                <span>浏览：</span>
+                <img id="clipView" src="" alt="">
+                <button id="uploadImage">上传</button>
+            </div>
+        </div>
+    </div>
+  
+    <script>
+       let uploadImage = document.getElementById('uploadImage');
+       uploadImage.onclick = async function(){
+            if(!curCanvas){
+                alert('请先上传图片');
+                return;
+            }
+             // 获取裁剪后的图片file对象
+            let uploadFile = await getClipFile(curCanvas);
+            console.log(uploadFile);
+       } 
 
-      //     // 图片原始尺寸
-      //     const originWidth = image.width;
-      //     const originHeight = image.height;
 
-      //     // 最大尺寸限制
-      //     const maxWidth = Math.min(image.width, 1200);
-      //     const maxHeight = Math.min(image.height, 1200);
-      //     // 目标尺寸
-      //     let targetWidth = originWidth;
-      //     let targetHeight = originHeight;
-
-      //     let quality = 0.92; // 默认质量
-      //     // 图片尺寸超过 1200 * 1200 的限制
-      //     if (originWidth > maxWidth || originHeight > maxHeight) {
-      //       if (originWidth / originHeight > maxWidth / maxHeight) {
-      //         // 更宽，按照宽度限定尺寸
-      //         targetWidth = maxWidth;
-      //         targetHeight = Math.round(maxWidth * (originHeight / originWidth));
-      //       } else {
-      //         // 更高，按照高度限定尺寸
-      //         targetHeight = maxHeight;
-      //         targetWidth = Math.round(maxHeight * (originWidth / originHeight));
-      //       }
-      //     }
-
-      //     canvas.width = targetWidth;
-      //     canvas.height = targetHeight;
-
-      //     // 绘制图片
-      //     context.drawImage(image, 0, 0, targetWidth, targetHeight);
-      //     // 获取图片url, base64格式
-      //     const data = canvas.toDataURL("image/jpeg", quality);
-      //     // base64格式 转为 file 格式，用于上传
-      //     const newfile = dataURLtoFile(data, `${fileName}.jpeg`);
-      //     resolve(newfile, data);
-      //   };
-      // };
-
-      // /**
-      //  * base64转file对象
-      //  * @param {*} dataurl 图片base64 数据
-      //  * @param {*} filename 文件名称
-      //  * @returns
-      //  */
-      // const dataURLtoFile = (dataurl, filename) => {
-      //   const arr = dataurl.split(",");
-      //   const mime = arr[0].match(/:(.*?);/)[1];
-      //   const bstr = atob(arr[1]);
-      //   let n = bstr.length;
-      //   const u8arr = new Uint8Array(n);
-      //   // eslint-disable-next-line no-plusplus
-      //   while (n--) {
-      //     u8arr[n] = bstr.charCodeAt(n);
-      //   }
-      //   return new File([u8arr], filename, { type: mime }); // 转成了jpeg格式
-      // };
-
-      // // 裁剪图片
-      // convertImage = file => {
-      //   const that = this;
-      //   return new Promise(resolve => {
-      //     const image = new Image(); // 新建一个img标签（还没嵌入DOM节点)
-      //     image.src = file; // 将图片的路径设成file路径
-      //     image.onload = () => {
-      //       const canvas = document.createElement("canvas");
-      //       const context = canvas.getContext("2d");
-
-      //       const targetWidth = 210; // 裁剪目标宽度 210 px
-      //       const targetHeight = image.height; // 裁剪目标高度 image.height 图片本身高度
-
-      //       canvas.width = targetWidth; // canvas宽度 210 px
-      //       canvas.height = targetHeight; // canvas宽度 targetHeight
-
-      //       context.drawImage(image, 115, 0, targetWidth, targetHeight, 0, 0, targetWidth, targetHeight); // 裁剪图片
-      //       const data = canvas.toDataURL("image/jpeg", 1);
-      //       resolve(data);
-      //     };
-      //   });
-      // };
-
-      // readImage = file =>
-      //   new Promise(resolve => {
-      //     // 获取文件名
-      //     const fileName = file.name.substring(0, file.name.indexOf("."));
-      //     const reader = new FileReader(); // 读取file
-      //     reader.readAsDataURL(file);
-      //     reader.onloadend = e => {
-      //       const imgSrc = e.target.result; // 获取文件的src
-      //       // ... 执行后续操作
-      //     };
-      //   });
+       /**
+  * 上传图片并裁剪
+ */
+//  file选择框
+let file = document.getElementById('file')
+// 裁剪背景图片
+let clipImage = document.getElementById('clipImage')
+// 裁剪使用的图片
+let clipPathImg = document.getElementById('clipPathImg')
+// 裁剪框
+let clip = document.getElementById('clip');
+// 浏览裁剪图片
+let clipView = document.getElementById('clipView');
+// 裁剪框的尺寸占图片比例
+let clipSize = 0.7;
+// 图片当前宽高
+let clipImageWidth = 0;
+let clipImageHeight = 0;
+// 图片原始宽高
+let clipImageOriginWidth = 0;
+let clipImageOriginHeight = 0;
+// 缩放比例
+let scale = 0;
+// 当前canvas对象
+let curCanvas = null;
+ 
+// 监听上传状态 浏览图片
+file.addEventListener('change', function () {
+  let file = this.files[0];
+  let reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function () {
+    // 读取到的图片数据
+    clipImage.src = reader.result;
+    // 裁剪使用的图片
+    clipPathImg.src = reader.result;
+      //获取当前图片的宽高
+      getClipImageSize(reader.result).then((res) => {
+        // 初始化
+        init();
+      })
+  }
+})
+ 
+// 获取上传图片的当前尺寸和原始尺寸
+function getClipImageSize(dataurl){
+   return  new Promise((resolve) => {
+        clipImage.onload = function () {
+          resolve(clipImage);
+        }
+    }).then((data) => {
+        // 获取图片当前宽高
+        clipImageWidth = data.width;
+        clipImageHeight = data.height;
+        return new Promise((resolve) => {
+          // 获取图片原始宽高
+          let img = document.createElement('img');
+          img.src = dataurl;
+          img.onload = function () {
+            resolve(img)
+          }
+        })
+    }).then((data) => {
+        // 获取图片原始宽高
+        clipImageOriginWidth = data.width;
+        clipImageOriginHeight = data.height;
+        return Promise.resolve();
+    })
+}
+ 
+// 初始化
+function init(){
+  // 显示裁剪框
+  clip.style.display = 'block';
+  // 缩放比例
+  scale = clipImageOriginWidth / clipImageWidth;
+ 
+  // 设置裁剪框的宽高
+  let clipWidth = Math.floor(clipImageWidth*clipSize);
+  let clipHeight = Math.floor(clipImageHeight*clipSize);
+  setClipSize(clipWidth, clipHeight);
+ 
+  // 设置裁剪框的位置
+  let x = Math.floor((clipImageWidth - clipWidth)/2);
+  let y = Math.floor((clipImageHeight - clipHeight)/2);
+  setClipPosition(x, y);
+}
+ 
+// 设置裁剪框的尺寸
+function setClipSize(clipWidth, clipHeight){
+  clip.style.setProperty('--clipWidth', clipWidth + 'px');
+  clip.style.setProperty('--clipHeight', clipHeight + 'px');
+}
+ 
+// 设置裁剪框的位置
+function setClipPosition(x, y){
+  clip.style.setProperty('--clipX', x + 'px');
+  clip.style.setProperty('--clipY', y + 'px');
+  // 设置裁剪阴影
+  setClipPath();
+}
+ 
+// 设置裁剪阴影
+ function setClipPath(){
+  let lt = clip.offsetLeft + 'px' + ' ' + clip.offsetTop + 'px';
+  let rt =   (clip.offsetLeft + clip.offsetWidth) + 'px' + ' ' + clip.offsetTop + 'px';
+  let rb = (clip.offsetLeft + clip.offsetWidth) + 'px' + ' ' +  (clip.offsetTop + clip.offsetHeight) + 'px';
+  let lb = clip.offsetLeft + 'px' + ' ' +  (clip.offsetTop + clip.offsetHeight) + 'px' ;
+  clipPathImg.style.setProperty('--clipPath', `polygon(${lt}, ${rt}, ${rb}, ${lb})`);
+   // 裁剪
+  let dataUrl =  clipImg(clip.offsetLeft * scale, clip.offsetTop * scale, clip.offsetWidth * scale, clip.offsetHeight * scale, clip.offsetWidth, clip.offsetHeight);
+  // 显示裁剪后的图片
+  clipView.src = dataUrl;
+}
+ 
+// 裁剪
+function clipImg(x,y,cutWidth,cutHeight,width,height,){
+  let canvas = document.createElement('canvas');
+  let ctx = canvas.getContext('2d');
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(clipImage, x, y, cutWidth, cutHeight, 0, 0, width, height);
+  // 当前canvas对象
+  curCanvas = canvas;
+  // 返回裁剪后的图片
+   return canvas.toDataURL();  
+}
+ 
+ 
+/**
+ *  裁剪框的拖拽
+ */
+// 鼠标按下时的位置
+let x = 0;
+let y = 0;
+// 鼠标按下时裁剪框的位置
+let offsetX = 0;
+let offsetY = 0;
+// 偏移量
+let py = {};
+// 鼠标按下
+clip.onmousedown = function (e) {
+  // 鼠标按下时的位置
+  x = e.clientX;
+  y = e.clientY;
+  // 鼠标按下时裁剪框的位置
+  offsetX = clip.offsetLeft;
+  offsetY = clip.offsetTop;
+  // 偏移量
+  py = {
+    x: e.clientX - offsetX,
+    y: e.clientY - offsetY
+  }
+  // 鼠标移动
+  window.onmousemove = function (e) {
+    // 鼠标移动的距离
+    let moveX = e.clientX - py.x;
+    let moveY = e.clientY - py.y;
+    // 裁剪框的位置
+    let left = moveX;
+    let top = moveY;
+    // 裁剪框的位置限制
+    if (left < 0) {
+      left = 0;
+    }
+    if (top < 0) {
+      top = 0;
+    }
+    if (left > clipImageWidth - clip.offsetWidth) {
+      left = clipImageWidth - clip.offsetWidth;
+    }
+    if (top > clipImageHeight - clip.offsetHeight) {
+      top = clipImageHeight - clip.offsetHeight;
+    }
+    // 设置裁剪框的位置
+    setClipPosition(left, top);
+  }
+  // 鼠标松开
+  window.onmouseup = function () {
+    window.onmouseup = null;
+    window.onmousemove = null;
+  }
+}
+ 
+ 
+ 
+/**
+ *  裁剪框的缩放
+ */
+ 
+// 获取裁剪框的四个角
+let zoomDom = {
+  lt: document.getElementsByClassName('lt'),
+  rt: document.getElementsByClassName('rt'),
+  rb: document.getElementsByClassName('rb'),
+  lb: document.getElementsByClassName('lb')
+};
+// 鼠标按下时的位置
+let zoomInfo = {
+  x: 0,
+  y: 0,
+  minWidth: 100,
+  minHeight: 100
+}
+// 鼠标按下时裁剪框的位置
+for (let key in zoomDom) {
+    zoomDom[key][0].onmousedown = function (e) {
+      // 禁止冒泡
+      e.stopPropagation();
+      // 鼠标按下时的位置
+      zoomInfo.x = e.clientX;
+      zoomInfo.y = e.clientY;
+      // 鼠标移动
+      window.onmousemove = function (e) {
+        // 鼠标移动的距离
+        let moveX = e.clientX - zoomInfo.x;
+        let moveY = e.clientY - zoomInfo.y;
+        // 裁剪框的位置 
+        let left = 0;
+        let top = 0;
+        // 裁剪框的尺寸
+        let width = 0;
+        let height = 0;
+ 
+        // 左上角
+        if (key === 'lt') {
+          // 裁剪框的位置 
+          left = clip.offsetLeft + moveX;
+          top = clip.offsetTop + moveY;
+          // 裁剪框的尺寸
+          width = clip.offsetWidth - moveX;
+          height = clip.offsetHeight - moveY;
+          // 裁剪框的位置限制
+          if (left < 0) {
+            left = 0;
+            // 原来宽度+原来left
+            width = clip.offsetWidth + clip.offsetLeft;
+          }
+          if (top < 0) {
+            top = 0;
+            // 原来高度+原来top
+            height = clip.offsetHeight + clip.offsetTop;
+          }
+        }
+        // 右上角
+        if (key === 'rt') {
+          // 裁剪框的位置
+          top = clip.offsetTop + moveY;
+          left = clip.offsetLeft;
+          // 裁剪框的尺寸
+          width = clip.offsetWidth + moveX;
+          height = clip.offsetHeight - moveY;
+          // 裁剪框的位置限制
+          if (top < 0) {
+            top = 0;
+            // 原来高度+原来top
+            height = clip.offsetHeight + clip.offsetTop;
+          }
+          if(left + width > clipImageWidth){
+            // 图片当前宽-原来left
+            width = clipImageWidth - left;
+          }
+        }
+        // 右下角
+        if (key === 'rb') {
+          // 裁剪框的尺寸
+          top = clip.offsetTop;
+          left = clip.offsetLeft;
+          width = clip.offsetWidth + moveX;
+          height = clip.offsetHeight + moveY;
+          // 裁剪框的位置限制
+          // 当前的left+当前的width>图片当前宽
+          if(clip.offsetLeft + width > clipImageWidth){
+            width = clipImageWidth - left;
+          }
+          // 当前的top+当前的height>图片当前宽
+          if(clip.offsetTop + height > clipImageHeight){
+            height = clipImageHeight - top;
+          }
+        }
+        // 左下角
+        if (key === 'lb') {
+          // 裁剪框的位置
+          left = clip.offsetLeft + moveX;
+          top = clip.offsetTop;
+          // 裁剪框的尺寸
+          width = clip.offsetWidth - moveX;
+          height = clip.offsetHeight + moveY;
+          // 裁剪框的位置限制
+          if (left < 0) {
+            left = 0;
+            width = clip.offsetWidth + clip.offsetLeft;
+          }
+          // 当前的top+当前的height>图片当前宽
+          if(clip.offsetTop + height > clipImageHeight){
+            height = clipImageHeight - top;
+          }
+        }
+        // 裁剪框的限制
+        ({width,height,left,top} = ClipWidthPosition(width, height, left, top))
+        // 设置裁剪框的位置
+        setClipPosition(left, top);
+        // 设置裁剪框的尺寸
+        setClipSize(width, height);
+        // 记录上一次的位置
+        zoomInfo.x = e.clientX;
+        zoomInfo.y = e.clientY;
+      }
+      // 鼠标松开
+      window.onmouseup = function () {
+        window.onmouseup = null;
+        window.onmousemove = null;
+      }
+    }
+}
+ 
+/**
+ * 裁剪框的宽高限制以及位置限制
+ * 
+ * @param {裁剪框宽度} w 
+ * @param {裁剪框的高度} h 
+ * @param {裁剪框的left} l 
+ * @param {裁剪框的top} r 
+ * @returns {宽度，高度，left，top}
+ */
+function ClipWidthPosition(w, h,l,t){
+  let width = w;
+  let height = h;
+  let left = l;
+  let top = t;
+  if (w < zoomInfo.minWidth) {
+    width = zoomInfo.minWidth;
+    left = clip.offsetLeft;
+  }
+  if (h < zoomInfo.minHeight) {
+    height = zoomInfo.minHeight;
+    top = clip.offsetTop;
+  }
+  return {width, height, left, top};
+}
+ 
+ 
+// 获取file对象
+async function getClipFile(canvas){
+  const file =  await new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+     resolve(new File([blob], 'clip.png', {type: 'image/png'}));
+    })
+  })
+  return file;
+}
     </script>
-  </body>
+</body>
 </html>

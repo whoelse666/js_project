@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一键复制网页内容为图片原理</title>
+  </head>
+  <body>
+    <div id="target">
+      <p>一键复制网页内容为图片原理</p>
+      <p>dfas</p>
+      <button onclick="copyDivToImage()">copyDivToImage</button>
+    </div>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <script>
+      function copyDivToImage() {
+        const element = document.getElementById("target");
+
+        html2canvas(element).then(canvas => {
+          document.body.appendChild(canvas);
+          canvas.toBlob(
+            async blob => {
+              // 复制文件到剪贴板
+              try {
+                await navigator.clipboard.write([
+                  // eslint-disable-next-line no-undef
+                  new ClipboardItem({
+                    [blob.type]: blob
+                  })
+                ]);
+                console.log("图像已成功复制到剪贴板`");
+              } catch (err) {
+                console.error("无法复制图像到剪贴板", err);
+              }
+            },
+            "image/png", // 文件的格式
+            1 // 图像压缩质量 0-1
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

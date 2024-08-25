@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>拖拽API DEMO</title>
+    <style>
+      #drag {
+        width: 50%;
+        height: 100vh;
+        background-color: rgb(210, 208, 208);
+        border: 1px solid #000;
+        position: relative;
+      }
+      #target {
+        float: right;
+        border: 2px solid pink;
+        width: 40%;
+        height: 300px;
+        background-color: white;
+      }
+      #drag > .drag {
+        margin: 10px;
+        width: 50px;
+        width: 50px;
+        height: 50px;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+      <div id="target"></div>
+    <div id="drag">
+
+      <div draggable="true" class="drag drag1">1</div>
+      <div draggable="true" class="drag drag2">1</div>
+      <div draggable="true" class="drag drag3">1</div>
+      <div draggable="true" class="drag drag4">1</div>
+      <div draggable="true" class="drag drag5">1</div>
+      <div draggable="true" class="drag drag6">1</div>
+    </div>
+    
+    <script>
+      const dragBox = document.querySelector("#drag");
+      const drag = document.querySelectorAll("#drag>div");
+      const target = document.querySelector("#target");
+
+      dragBox.ondragstart = function (e) {
+        console.log("dragstart", e.target);
+      }
+      dragBox.ondragend = function (e) {
+        console.log("dragend", e.target);
+      }
+      dragBox.ondragenter = function (e) {
+        console.log("ondragenter", e.target);
+      }
+      dragBox.ondragleave = function (e) {
+        console.log("dragleave", e.target);
+      }
+      dragBox.ondragover = function (e) {
+        //  e.preventDefault();
+          // console.log("dragover", e.target);
+      }
+      dragBox.ondrag = function (e) {
+        // console.log("drag", e.target);
+      }
+      dragBox.ondrop = function (e) {
+        // 需要  ondragover  并且      e.preventDefault();
+        console.log("ondrop", e.target);
+      }
+   
+    </script>
+  </body>
+</html>

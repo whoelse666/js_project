@@ -1,6 +1,6 @@
 // 工具函数
 //复制
-async function copyToClipboard(text){
+async function copyToClipboard(text) {
   if (!text) return;
   if (typeof text === "number") text = text.toString();
   if (navigator.clipboard) {
@@ -36,3 +36,10 @@ async function copyToClipboard(text){
   }
 }
 
+// 数字分割
+numberSplit('10000000');
+function numberSplit(str) {
+  // const s = str.replace(/\B(?=(\d{3})+$)/g, ",");
+  const s = str.replace(/\B(?=(\d{3})+$)/g, ",");
+  console.log(s);
+}

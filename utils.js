@@ -36,6 +36,8 @@ async function copyToClipboard(text) {
   }
 }
 
+
+
 // 数字分割
 numberSplit('10000000');
 function numberSplit(str) {

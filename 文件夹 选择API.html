@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件夹 选择API</title>
+</head>
+
+<body>
+
+    <!-- HTMLInputElement.webkitdirectory 是一个反应了 HTML 属性 webkitdirectory 的属性，其指示 <input> 元素应该让用户选择文件目录而非文件。在选择文件目录后，该目录及其整个内容层次结构将包含在所选项目集内。可以使用 webkitEntries 属性获取选定的文件系统条目。-->
+  <input type='file' onchange="triggerFile(event)" webkitdirectory >
+
+  <ul id="listing"></ul>
+
+  <button onclick="getDir()">showDirectoryPicker</button>
+  <script>
+    function triggerFile(event) {
+      let file = event.target.files
+      console.log(file)
+      let output = document.getElementById("listing")
+      for (const file of event.target.files) {
+        let item = document.createElement("li")
+        item.textContent = file.webkitRelativePath
+        output.appendChild(item)
+      }
+    }
+    // 获取  Window 接口的 showDirectoryPicker() 方法用于显示一个目录选择器，以允许用户选择一个目录
+    async function getDir() {
+      const dirHandle = await window.showDirectoryPicker()
+      console.log('dirHandle', dirHandle)
+    }
+
+  </script>
+</body>
+
+</html>

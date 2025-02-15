@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语音转文本演示</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button.listening {
+      background-color: #f44336;
+    }
+
+    button.listening:hover {
+      background-color: #d32f2f;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>语音转文本演示</h1>
+    <button id="toggleButton">开始录音</button>
+    <textarea id="output" rows="5" placeholder="识别的文本将显示在这里..."></textarea>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleButton = document.getElementById("toggleButton")
+      const output = document.getElementById("output")
+      let recognition
+      let isListening = false
+
+      // 检查浏览器支持
+      window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+      if (window.SpeechRecognition) {
+        recognition = new window.SpeechRecognition()
+        recognition.continuous = true
+        recognition.interimResults = true
+        recognition.lang = "zh-CN"
+
+        recognition.onstart = () => {
+          console.log("语音识别已启动")
+          output.value = "正在听取..."
+        }
+
+        recognition.onresult = (event) => {
+          let interimTranscript = ""
+          let finalTranscript = ""
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript
+            } else {
+              interimTranscript += transcript
+            }
+          }
+
+          output.value = finalTranscript || interimTranscript
+        }
+
+        recognition.onerror = (event) => {
+          console.error("语音识别错误:", event.error)
+          switch (event.error) {
+            case "no-speech":
+              output.value = "未检测到语音，请再试一次。"
+              break
+            case "audio-capture":
+              output.value = "无法访问麦克风。请确保设备有麦克风并已授权使用。"
+              break
+            case "not-allowed":
+              output.value = "语音识别权限被拒绝。请检查浏览器设置。"
+              break
+            case "network":
+              output.value = "网络错误，请检查您的互联网连接。"
+              break
+            default:
+              output.value = "发生错误：" + event.error
+          }
+          stopRecognition()
+        }
+
+        recognition.onend = () => {
+          console.log("语音识别已结束")
+          stopRecognition()
+        }
+
+        toggleButton.addEventListener("click", toggleRecognition)
+      } else {
+        toggleButton.textContent = "您的浏览器不支持语音识别"
+        toggleButton.disabled = true
+        output.value = "抱歉，您的浏览器不支持语音识别功能。请尝试使用最新版本的 Chrome、Edge 或 Safari。"
+      }
+
+      function toggleRecognition() {
+        if (isListening) {
+          stopRecognition()
+        } else {
+          startRecognition()
+        }
+      }
+
+      function startRecognition() {
+        recognition.start()
+        isListening = true
+        toggleButton.textContent = "停止录音"
+        toggleButton.classList.add("listening")
+      }
+
+      function stopRecognition() {
+        if (recognition) {
+          recognition.stop()
+        }
+        isListening = false
+        toggleButton.textContent = "开始录音"
+        toggleButton.classList.remove("listening")
+      }
+    })
+
+
+
+  </script>
+</body>
+
+</html>

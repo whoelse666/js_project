@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>本地文本流式显示</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    #container {
+      width: 80%;
+      max-width: 600px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #output {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <h1>本地文本流式显示</h1>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const text = `这是一段示例文本，用于演示流式显示效果。
+这种效果可以模拟打字机或者实时数据流的显示方式。
+它可以用于创建有趣的用户界面，或者模拟实时数据传输的过程。
+你可以根据需要调整显示速度和文本内容。`
+
+    const output = document.getElementById('output')
+    let index = 0
+
+    function streamText() {
+      if (index < text.length) {
+        output.textContent += text[index]
+        index++
+        setTimeout(streamText, 50) // 每50毫秒显示一个字符
+      }
+    }
+
+    // 开始流式显示
+    streamText();
+  </script>
+</body>
+
+</html>

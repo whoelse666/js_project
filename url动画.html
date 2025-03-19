@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>url动画</title>
+</head>
+<body>
+  <script>
+    //https://matthewrayfield.com/articles/animating-urls-with-javascript-and-emojis/#%F0%9F%91%B6%F0%9F%8F%BB%F0%9F%91%B6%F0%9F%8F%BB%F0%9F%91%B6%F0%9F%8F%BD%F0%9F%91%B6%F0%9F%8F%BF%F0%9F%91%B6%F0%9F%8F%BF%F0%9F%91%B6%F0%9F%8F%BD%F0%9F%91%B6%F0%9F%8F%BB%F0%9F%91%B6%F0%9F%8F%BB%F0%9F%91%B6%F0%9F%8F%BC%F0%9F%91%B6%F0%9F%8F%BF
+ function loop() {
+    var i, n, s = ''
+
+    for (i = 0; i < 10; i++) {
+      n = Math.floor(Math.sin((Date.now() / 200) + (i / 2)) * 4) + 4
+
+      s += String.fromCharCode(0x2581 + n)
+    }
+
+    window.location.hash = s
+
+    setTimeout(loop, 50)
+  }
+
+  loop();
+  </script>
+</body>
+</html>

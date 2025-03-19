@@ -30,35 +30,36 @@ function concurrentControl<T>(asyncFuncs: (() => Promise<T>)[], limit: number): 
   return Promise.all(promises).then(() => results);
 }
 
-
 // 定义需要执行的异步函数
 const asyncFuncs = [
   async () => {
-    console.log('start task 1');
+    console.log("start task 1");
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('end task 1');
+    console.log("end task 1");
     return 1;
   },
   async () => {
-    console.log('start task 2');
+    console.log("start task 2");
     await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('end task 2');
+    console.log("end task 2");
     return 2;
   },
   async () => {
-    console.log('start task 3');
+    console.log("start task 3");
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('end task 3');
+    console.log("end task 3");
     return 3;
   },
   async () => {
-    console.log('start task 4');
+    console.log("start task 4");
     await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('end task 4');
+    console.log("end task 4");
     return 4;
   }
 ];
+
+
 // 控制并发数量为 2，执行异步任务
 concurrentControl(asyncFuncs, 2).then(results => {
-  console.log('results:', results);
+  console.log("results:", results);
 });
